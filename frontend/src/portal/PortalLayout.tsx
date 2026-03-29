@@ -5,8 +5,8 @@ import { PortalBrandRow } from './PortalChrome'
 const tabs: { to: string; label: [string, string]; icon: string }[] = [
   { to: '/portal', label: ['Home', 'Nyumbani'], icon: '\u2302' },
   { to: '/portal/deliveries', label: ['Deliveries', 'Mizigo'], icon: '\u25A0' },
-  { to: '/portal/payments', label: ['Payments', 'Malipo'], icon: '\u20B9' },
-  { to: '/portal/deductions', label: ['Deductions', 'Makato'], icon: '\u25C6' },
+  { to: '/portal/payments', label: ['Payments', 'Malipo'], icon: '\u24C2' },
+  { to: '/portal/deductions', label: ['Deductions', 'Makato'], icon: '\u2211' },
   { to: '/portal/loans', label: ['FlowCredit', 'Mkopo'], icon: '\u2605' },
 ]
 
