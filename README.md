@@ -26,12 +26,18 @@
 
 Add images under `docs/screenshots/` (see `docs/screenshots/README.md`). Reference them here, for example:
 
-- `docs/screenshots/01-login-roles.png`
-- `docs/screenshots/02-operations-dashboard.png`
-- `docs/screenshots/03-farmer-registry.png`
-- `docs/screenshots/04-flowcredit-hub.png`
-- `docs/screenshots/05-farmer-portal-home.png`
-- `docs/screenshots/06-ussd-simulator.png`
+<img width="1361" height="631" alt="image" src="https://github.com/user-attachments/assets/583342f3-1195-42eb-8fd6-f07cb1ba14c7" />
+
+<img width="1349" height="631" alt="image" src="https://github.com/user-attachments/assets/fb98bea0-3339-4ef9-b595-9df2a8cc71e8" />
+
+<img width="1351" height="633" alt="image" src="https://github.com/user-attachments/assets/ac2c6086-6776-43aa-bb41-10fa723bb1e1" />
+
+<img width="527" height="618" alt="image" src="https://github.com/user-attachments/assets/6eda5e58-a8af-48fd-a8ac-90b88daf5cc9" />
+
+<img width="1364" height="631" alt="image" src="https://github.com/user-attachments/assets/a27895a5-6c88-41a8-912d-6dc96aaa2225" />
+
+<img width="372" height="239" alt="image" src="https://github.com/user-attachments/assets/787e6cbd-bdd5-494c-8120-7ee46ebd25f8" />
+
 
 ---
 
