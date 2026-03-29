@@ -3,6 +3,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const mpesaService = require('./services/MpesaService');
+const apiRoutes = require('./routes/api');
 
 const app = express();
 
@@ -25,5 +26,7 @@ app.get('/test-mpesa-token', async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 });
+
+app.use('/api', apiRoutes);
 
 module.exports = app;
