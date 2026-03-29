@@ -24,7 +24,6 @@
 
 ## Screenshots
 
-Add images under `docs/screenshots/` (see `docs/screenshots/README.md`). Reference them here, for example:
 
 <img width="1361" height="631" alt="image" src="https://github.com/user-attachments/assets/583342f3-1195-42eb-8fd6-f07cb1ba14c7" />
 
