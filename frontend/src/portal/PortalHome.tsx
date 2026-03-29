@@ -5,8 +5,9 @@ import { useApp } from '../context/AppProvider'
 import { PortalCard, PortalPageTitle } from './PortalChrome'
 
 export function PortalHome() {
-  const { t, auth } = useApp()
+  const { t, auth, pendingFarmerDisbursements, farmerCreditScore } = useApp()
   const name = auth?.name?.split(' ')[0] ?? 'Mkulima'
+  const pendingTotal = pendingFarmerDisbursements.reduce((a, p) => a + p.amount, 0)
 
   return (
     <div>
@@ -28,7 +29,32 @@ export function PortalHome() {
           <span className="chip" style={{ background: 'rgba(255,255,255,0.18)', color: '#fff', border: '1px solid rgba(255,255,255,0.25)' }}>
             {t('Account active', 'Akaunti hai')}
           </span>
+          <span className="chip" style={{ background: 'rgba(255,255,255,0.12)', color: '#fff', border: '1px solid rgba(255,255,255,0.2)' }}>
+            FlowCredit {farmerCreditScore}
+          </span>
         </div>
+        {pendingFarmerDisbursements.length > 0 && (
+          <Link
+            to="/portal/wallet"
+            style={{
+              display: 'block',
+              marginTop: 14,
+              padding: '12px 14px',
+              borderRadius: 12,
+              background: 'rgba(0,0,0,0.2)',
+              color: '#fff',
+              textDecoration: 'none',
+              fontWeight: 800,
+              fontSize: 14,
+              border: '1px solid rgba(255,255,255,0.25)',
+            }}
+          >
+            {t(
+              `${pendingFarmerDisbursements.length} disbursement(s) to accept in Wallet →`,
+              `${pendingFarmerDisbursements.length} malipo ya kuidhinisha Wallet →`,
+            )}
+          </Link>
+        )}
       </div>
 
       <PortalPageTitle
@@ -55,7 +81,7 @@ export function PortalHome() {
         </div>
         <div style={{ textAlign: 'center', marginTop: 10 }}>
           <span className="money" style={{ fontSize: 'clamp(2rem, 8vw, 2.35rem)', fontWeight: 900, color: 'var(--gold)' }}>
-            <Money amount={3200} gold />
+            <Money amount={pendingTotal > 0 ? pendingTotal : 3200} gold />
           </span>
         </div>
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 6, marginTop: 8, fontSize: 12, color: 'var(--muted)' }}>
@@ -85,7 +111,11 @@ export function PortalHome() {
         </span>
       </div>
 
-      <Link className="btn btn-gold" to="/portal/loans" style={{ width: '100%', marginTop: 16, justifyContent: 'center' }}>
+      <Link className="btn btn-primary" to="/portal/wallet" style={{ width: '100%', marginTop: 12, justifyContent: 'center' }}>
+        <MpesaBadge />
+        {t('Wallet · accept & credit history', 'Wallet · pokea na historia')}
+      </Link>
+      <Link className="btn btn-gold" to="/portal/loans" style={{ width: '100%', marginTop: 10, justifyContent: 'center' }}>
         <MpesaBadge />
         {t('Apply for loan', 'Omba mkopo')}
       </Link>

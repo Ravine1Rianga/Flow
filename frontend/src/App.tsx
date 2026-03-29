@@ -25,6 +25,8 @@ import { PortalPayments } from './portal/PortalPayments'
 import { PortalDeductions } from './portal/PortalDeductions'
 import { PortalLoans } from './portal/PortalLoans'
 import { PortalUssd } from './portal/PortalUssd'
+import { PortalWallet } from './portal/PortalWallet'
+import { VoiceAgent } from './components/VoiceAgent'
 
 function RequireStaff({ children }: { children: React.ReactElement }) {
   const { auth } = useApp()
@@ -46,6 +48,7 @@ function AppRoutes() {
     <>
       <GlobalSearch />
       <ToastHost />
+      {auth && <VoiceAgent portal={auth.role === 'farmer'} />}
       <Routes>
         <Route path="/" element={auth ? <Navigate to={auth.role === 'farmer' ? '/portal' : '/app'} replace /> : <LoginPage />} />
         <Route
@@ -91,6 +94,7 @@ function AppRoutes() {
           }
         >
           <Route index element={<PortalHome />} />
+          <Route path="wallet" element={<PortalWallet />} />
           <Route path="deliveries" element={<PortalDeliveries />} />
           <Route path="payments" element={<PortalPayments />} />
           <Route path="deductions" element={<PortalDeductions />} />

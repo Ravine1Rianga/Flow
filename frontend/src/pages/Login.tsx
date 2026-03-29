@@ -5,7 +5,7 @@ import { useApp } from '../context/AppProvider'
 import type { Role } from '../types'
 
 export function LoginPage() {
-  const { login, lang, setLang, t } = useApp()
+  const { login, lang, setLang, t, theme, toggleTheme } = useApp()
   const nav = useNavigate()
   const [role, setRole] = useState<Role>('admin')
   const [email, setEmail] = useState('admin@chaiconnect.co.ke')
@@ -69,14 +69,14 @@ export function LoginPage() {
           position: 'relative',
         }}
       >
-        <button
-          type="button"
-          className="btn btn-ghost"
-          style={{ position: 'absolute', top: 20, right: 20 }}
-          onClick={() => setLang(lang === 'en' ? 'sw' : 'en')}
-        >
-          {lang === 'en' ? 'Kiswahili' : 'English'}
-        </button>
+        <div style={{ position: 'absolute', top: 20, right: 20, display: 'flex', gap: 8 }}>
+          <button type="button" className="btn btn-ghost" onClick={toggleTheme} title={theme === 'dark' ? t('Light mode', 'Mwanga') : t('Dark mode', 'Giza')}>
+            {theme === 'dark' ? '☀' : '☾'}
+          </button>
+          <button type="button" className="btn btn-ghost" onClick={() => setLang(lang === 'en' ? 'sw' : 'en')}>
+            {lang === 'en' ? 'Kiswahili' : 'English'}
+          </button>
+        </div>
 
         <div style={{ flex: 1, display: 'flex', alignItems: 'center' }}>
           <div style={{ width: '100%', maxWidth: 420 }}>

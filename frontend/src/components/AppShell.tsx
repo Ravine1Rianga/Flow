@@ -1,5 +1,8 @@
+import { useEffect, useState } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { useApp } from '../context/AppProvider'
+import { useMediaQuery } from '../lib/useMediaQuery'
+
 const LEAF_BG = `url("data:image/svg+xml,${encodeURIComponent(
   "<svg xmlns='http://www.w3.org/2000/svg' width='96' height='96' viewBox='0 0 96 96'><path fill='%23ffffff' fill-opacity='0.04' d='M48 10c-10 18-20 28-20 38 0 12 9 22 20 27 11-5 20-15 20-27 0-10-10-20-20-38z'/></svg>",
 )}")`
@@ -8,24 +11,31 @@ const navClass = ({ isActive }: { isActive: boolean }) =>
   `nav-item${isActive ? ' nav-item-active' : ''}`
 
 export function AppShell({ flowcredit }: { flowcredit?: boolean }) {
-  const { auth, logout, setSearchOpen, pushToast, lang, setLang, t } = useApp()
+  const { auth, logout, setSearchOpen, pushToast, lang, setLang, t, theme, toggleTheme } = useApp()
   const nav = useNavigate()
   const accent = flowcredit ? 'var(--gold)' : 'var(--fresh)'
+  const isNarrow = useMediaQuery('(max-width: 900px)')
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+
+  const closeSidebar = () => setSidebarOpen(false)
+
+  useEffect(() => {
+    if (!isNarrow) setSidebarOpen(false)
+  }, [isNarrow])
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh' }}>
+    <div className="shell-layout">
+      <button
+        type="button"
+        className={`shell-backdrop${sidebarOpen && isNarrow ? ' shell-backdrop-visible' : ''}`}
+        aria-label={t('Close menu', 'Funga menyu')}
+        onClick={closeSidebar}
+      />
       <aside
+        id="staff-sidebar"
+        className={`shell-sidebar${sidebarOpen && isNarrow ? ' shell-sidebar-open' : ''}`}
         style={{
-          width: 240,
-          flexShrink: 0,
-          backgroundColor: 'var(--forest)',
           backgroundImage: LEAF_BG,
-          color: '#fff',
-          display: 'flex',
-          flexDirection: 'column',
-          position: 'sticky',
-          top: 0,
-          height: '100vh',
         }}
       >
         <div style={{ padding: '20px 18px', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
@@ -42,39 +52,39 @@ export function AppShell({ flowcredit }: { flowcredit?: boolean }) {
 
         <nav style={{ flex: 1, overflow: 'auto', padding: '12px 10px' }}>
           <NavGroup label="Overview" />
-          <NavLink to="/app" end className={navClass}>
+          <NavLink to="/app" end className={navClass} onClick={() => isNarrow && closeSidebar()}>
             Dashboard
           </NavLink>
 
           <NavGroup label="Farmers" />
-          <NavLink className={navClass} to="/app/farmers">
+          <NavLink className={navClass} to="/app/farmers" onClick={() => isNarrow && closeSidebar()}>
             Farmer Registry
           </NavLink>
 
           <NavGroup label="Operations" />
-          <NavLink className={navClass} to="/app/deliveries">
+          <NavLink className={navClass} to="/app/deliveries" onClick={() => isNarrow && closeSidebar()}>
             Deliveries
           </NavLink>
-          <NavLink className={navClass} to="/app/quality">
+          <NavLink className={navClass} to="/app/quality" onClick={() => isNarrow && closeSidebar()}>
             Quality
           </NavLink>
-          <NavLink className={navClass} to="/app/payments">
+          <NavLink className={navClass} to="/app/payments" onClick={() => isNarrow && closeSidebar()}>
             Payments
           </NavLink>
 
           <NavGroup label="FlowCredit" />
-          <NavLink className={navClass} to="/flowcredit">
+          <NavLink className={navClass} to="/flowcredit" onClick={() => isNarrow && closeSidebar()}>
             FlowCredit Hub
           </NavLink>
 
           <NavGroup label="More" />
-          <NavLink className={navClass} to="/app/communications">
+          <NavLink className={navClass} to="/app/communications" onClick={() => isNarrow && closeSidebar()}>
             Communications
           </NavLink>
-          <NavLink className={navClass} to="/app/reports">
+          <NavLink className={navClass} to="/app/reports" onClick={() => isNarrow && closeSidebar()}>
             Reports
           </NavLink>
-          <NavLink className={navClass} to="/app/settings">
+          <NavLink className={navClass} to="/app/settings" onClick={() => isNarrow && closeSidebar()}>
             Settings
           </NavLink>
         </nav>
@@ -153,12 +163,12 @@ export function AppShell({ flowcredit }: { flowcredit?: boolean }) {
         </div>
       </aside>
 
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+      <div className="shell-main-wrap" style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
         <header
           style={{
             height: 60,
-            background: '#fff',
-            borderBottom: '1px solid rgba(0,0,0,0.06)',
+            background: 'var(--header-bg)',
+            borderBottom: `1px solid var(--header-border)`,
             display: 'flex',
             alignItems: 'center',
             padding: '0 22px',
@@ -168,6 +178,15 @@ export function AppShell({ flowcredit }: { flowcredit?: boolean }) {
             zIndex: 40,
           }}
         >
+          <button
+            type="button"
+            className="shell-hamburger"
+            aria-expanded={sidebarOpen}
+            aria-controls="staff-sidebar"
+            onClick={() => setSidebarOpen((o) => !o)}
+          >
+            {sidebarOpen ? '✕' : '☰'}
+          </button>
           <select
             className="input"
             style={{ width: 220, padding: '8px 10px', fontWeight: 600 }}
@@ -181,6 +200,15 @@ export function AppShell({ flowcredit }: { flowcredit?: boolean }) {
             {t('Search', 'Tafuta')} <span style={{ color: 'var(--muted)', fontSize: 12 }}>⌘K</span>
           </button>
           <div style={{ flex: 1 }} />
+          <button
+            type="button"
+            className="btn btn-ghost"
+            onClick={toggleTheme}
+            title={theme === 'dark' ? t('Light mode', 'Mwanga') : t('Dark mode', 'Giza')}
+            aria-label={t('Toggle theme', 'Badili mandhari')}
+          >
+            {theme === 'dark' ? '☀' : '☾'}
+          </button>
           <button
             className="btn btn-ghost"
             onClick={() =>
@@ -196,7 +224,7 @@ export function AppShell({ flowcredit }: { flowcredit?: boolean }) {
             className="chip"
             style={{
               background: 'rgba(217,119,6,0.15)',
-              color: '#92400e',
+              color: 'var(--amber-warn)',
               border: '1px solid rgba(217,119,6,0.35)',
             }}
           >

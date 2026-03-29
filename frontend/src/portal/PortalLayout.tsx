@@ -2,8 +2,9 @@ import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { useApp } from '../context/AppProvider'
 import { PortalBrandRow } from './PortalChrome'
 
-const tabs: { to: string; label: [string, string]; icon: string }[] = [
-  { to: '/portal', label: ['Home', 'Nyumbani'], icon: '\u2302' },
+const tabs: { to: string; label: [string, string]; icon: string; end?: boolean }[] = [
+  { to: '/portal', label: ['Home', 'Nyumbani'], icon: '\u2302', end: true },
+  { to: '/portal/wallet', label: ['Wallet', 'Pochi'], icon: 'W' },
   { to: '/portal/deliveries', label: ['Deliveries', 'Mizigo'], icon: '\u25A0' },
   { to: '/portal/payments', label: ['Payments', 'Malipo'], icon: '\u24C2' },
   { to: '/portal/deductions', label: ['Deductions', 'Makato'], icon: '\u2211' },
@@ -11,7 +12,7 @@ const tabs: { to: string; label: [string, string]; icon: string }[] = [
 ]
 
 export function PortalLayout() {
-  const { lang, setLang, logout, t } = useApp()
+  const { lang, setLang, logout, t, theme, toggleTheme } = useApp()
   const nav = useNavigate()
 
   return (
@@ -25,6 +26,22 @@ export function PortalLayout() {
               <span className="portal-daraja-dot" />
               <span style={{ fontWeight: 700 }}>Daraja</span>
             </div>
+            <button
+              type="button"
+              className="btn btn-ghost"
+              style={{
+                padding: '6px 10px',
+                fontSize: 12,
+                background: 'rgba(255,255,255,0.1)',
+                color: '#fff',
+                borderColor: 'rgba(255,255,255,0.2)',
+              }}
+              onClick={toggleTheme}
+              title={theme === 'dark' ? t('Light mode', 'Mwanga') : t('Dark mode', 'Giza')}
+              aria-label={t('Toggle theme', 'Badili mandhari')}
+            >
+              {theme === 'dark' ? '☀' : '☾'}
+            </button>
             <button
               className="btn btn-ghost"
               type="button"
@@ -66,7 +83,7 @@ export function PortalLayout() {
 
       <nav className="portal-nav">
         {tabs.map((tab) => (
-          <NavLink key={tab.to} to={tab.to} end={tab.to === '/portal'} className={({ isActive }) => (isActive ? 'active' : undefined)}>
+          <NavLink key={tab.to} to={tab.to} end={tab.end === true} className={({ isActive }) => (isActive ? 'active' : undefined)}>
             <span aria-hidden style={{ fontSize: 14, opacity: 0.9, fontWeight: 800, fontFamily: 'var(--font-display)' }}>
               {tab.icon}
             </span>

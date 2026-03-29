@@ -85,3 +85,24 @@ export interface Complaint {
   status: 'Open' | 'Under Review' | 'Resolved'
   date: string
 }
+
+/** Money queued for farmer to acknowledge in-app (after staff B2C or co-op net). */
+export interface PendingFarmerDisbursement {
+  id: string
+  amount: number
+  label: string
+  ref: string
+  source: 'flowcredit_b2c' | 'coop_payment'
+  createdAt: string
+}
+
+/** Row in the M-Pesa-based history that drives FlowCredit scoring. */
+export interface CreditLedgerLine {
+  id: string
+  date: string
+  description: string
+  amount: number
+  direction: 'in' | 'out'
+  /** Human-readable reason this transaction helps or hurts the score */
+  scoringSignal: string
+}
