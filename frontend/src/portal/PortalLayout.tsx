@@ -1,72 +1,109 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { useApp } from '../context/AppProvider'
+import { PortalBrandRow } from './PortalChrome'
 
 const tabs: { to: string; label: [string, string]; icon: string }[] = [
-  { to: '/portal', label: ['Home', 'Nyumbani'], icon: '🏠' },
-  { to: '/portal/deliveries', label: ['Deliveries', 'Mizigo'], icon: '📦' },
-  { to: '/portal/payments', label: ['Payments', 'Malipo'], icon: '💳' },
-  { to: '/portal/deductions', label: ['Deductions', 'Makato'], icon: '📊' },
-  { to: '/portal/loans', label: ['FlowCredit', 'Mkopo'], icon: '✨' },
+  { to: '/portal', label: ['Home', 'Nyumbani'], icon: '\u2302' },
+  { to: '/portal/deliveries', label: ['Deliveries', 'Mizigo'], icon: '\u25A0' },
+  { to: '/portal/payments', label: ['Payments', 'Malipo'], icon: '\u20B9' },
+  { to: '/portal/deductions', label: ['Deductions', 'Makato'], icon: '\u25C6' },
+  { to: '/portal/loans', label: ['FlowCredit', 'Mkopo'], icon: '\u2605' },
 ]
 
 export function PortalLayout() {
   const { lang, setLang, logout, t } = useApp()
   const nav = useNavigate()
+
   return (
-    <div className="portal-body" style={{ minHeight: '100vh', paddingBottom: 72, background: 'var(--parchment)' }}>
-      <header
-        style={{
-          position: 'sticky',
-          top: 0,
-          zIndex: 40,
-          background: 'rgba(248,245,240,0.9)',
-          backdropFilter: 'blur(8px)',
-          borderBottom: '1px solid rgba(0,0,0,0.06)',
-          padding: '12px 14px',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-        }}
-      >
-        <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900 }}>ChaiConnect</div>
-        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-          <button className="btn btn-ghost" type="button" style={{ padding: '6px 10px', fontSize: 13 }} onClick={() => setLang(lang === 'en' ? 'sw' : 'en')}>
-            {lang === 'en' ? 'Kiswahili' : 'English'}
-          </button>
-          <button
-            className="btn btn-ghost"
-            type="button"
-            style={{ padding: '6px 10px', fontSize: 13 }}
-            onClick={() => {
-              logout()
-              nav('/')
-            }}
-          >
-            {t('Exit', 'Toka')}
-          </button>
+    <div className="portal-body" style={{ minHeight: '100vh', paddingBottom: 88, background: 'var(--parchment)' }}>
+      <header className="portal-header-shell">
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, flexWrap: 'wrap' }}>
+          <PortalBrandRow />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+            <div className="portal-pill-sandbox">Sandbox</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, opacity: 0.9 }}>
+              <span className="portal-daraja-dot" />
+              <span style={{ fontWeight: 700 }}>Daraja</span>
+            </div>
+            <button
+              className="btn btn-ghost"
+              type="button"
+              style={{
+                padding: '6px 10px',
+                fontSize: 12,
+                background: 'rgba(255,255,255,0.1)',
+                color: '#fff',
+                borderColor: 'rgba(255,255,255,0.2)',
+              }}
+              onClick={() => setLang(lang === 'en' ? 'sw' : 'en')}
+            >
+              {lang === 'en' ? 'Kiswahili' : 'English'}
+            </button>
+            <button
+              className="btn btn-ghost"
+              type="button"
+              style={{
+                padding: '6px 10px',
+                fontSize: 12,
+                background: 'rgba(255,255,255,0.1)',
+                color: '#fff',
+                borderColor: 'rgba(255,255,255,0.2)',
+              }}
+              onClick={() => {
+                logout()
+                nav('/')
+              }}
+            >
+              {t('Exit', 'Toka')}
+            </button>
+          </div>
         </div>
       </header>
-      <main style={{ padding: 16, maxWidth: 520, margin: '0 auto' }} className="page-enter">
+
+      <main style={{ padding: '16px 14px', maxWidth: 520, margin: '0 auto' }} className="page-enter">
         <Outlet />
       </main>
+
       <nav className="portal-nav">
         {tabs.map((tab) => (
-          <NavLink
-            key={tab.to}
-            to={tab.to}
-            end={tab.to === '/portal'}
-            className={({ isActive }) => (isActive ? 'active' : undefined)}
-          >
-            <span aria-hidden style={{ fontSize: 16 }}>
+          <NavLink key={tab.to} to={tab.to} end={tab.to === '/portal'} className={({ isActive }) => (isActive ? 'active' : undefined)}>
+            <span aria-hidden style={{ fontSize: 14, opacity: 0.9, fontWeight: 800, fontFamily: 'var(--font-display)' }}>
               {tab.icon}
             </span>
-            <span style={{ fontFamily: 'var(--font-display)' }}>{lang === 'sw' ? tab.label[1] : tab.label[0]}</span>
+            <span style={{ fontFamily: 'var(--font-display)', fontSize: 10, letterSpacing: '0.02em' }}>
+              {lang === 'sw' ? tab.label[1] : tab.label[0]}
+            </span>
           </NavLink>
         ))}
       </nav>
-      <div style={{ textAlign: 'center', marginTop: -48, paddingBottom: 8 }}>
-        <NavLink to="/portal/ussd" style={{ fontSize: 13, fontWeight: 800, color: 'var(--leaf)' }}>
-          {t('Open USSD simulator', 'Fungua USSD')}
+
+      <div
+        style={{
+          position: 'fixed',
+          left: 0,
+          right: 0,
+          bottom: 56,
+          zIndex: 45,
+          textAlign: 'center',
+          paddingBottom: 4,
+          pointerEvents: 'none',
+        }}
+      >
+        <NavLink
+          to="/portal/ussd"
+          style={{
+            fontSize: 12,
+            fontWeight: 800,
+            color: 'var(--leaf)',
+            pointerEvents: 'auto',
+            padding: '6px 12px',
+            background: 'var(--surface)',
+            borderRadius: 999,
+            border: '1px solid rgba(0,0,0,0.08)',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+          }}
+        >
+          {t('USSD *483#', 'USSD *483#')}
         </NavLink>
       </div>
     </div>

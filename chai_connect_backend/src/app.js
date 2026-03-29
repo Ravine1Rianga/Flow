@@ -1,3 +1,7 @@
+/**
+ * ChaiConnect Express application entry (middleware + routes).
+ * Demo JSON APIs are mounted at /api; production can add auth and real Daraja webhooks here.
+ */
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
