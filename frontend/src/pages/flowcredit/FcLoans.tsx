@@ -1,22 +1,53 @@
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { FARMERS, LOANS } from '../../data/seed'
+import { Money } from '../../components/Money'
+import { fetchLoans, fetchFarmers } from '../../lib/api'
+
+type LoanRow = { id: string; farmerId: string; farmerName: string; amount: number; status: string; nextDue: string; repaidFraction: number; interestPct: number; instalments: number }
+type FarmerRow = { id: string; name: string; creditScore: number; creditTier: string; memberNo: string }
 
 export function FlowCreditLoansPage() {
-  const eligibleFarmers = FARMERS.filter((f) => f.loanFlow === 'eligible')
-  const activeLoans = LOANS.filter((l) => l.status === 'Active' || l.status === 'Overdue')
-  const doneLoans = LOANS.filter((l) => l.status === 'Completed')
+  const [loans, setLoans] = useState<LoanRow[]>([])
+  const [farmers, setFarmers] = useState<FarmerRow[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    void (async () => {
+      const [l, f] = await Promise.all([fetchLoans(), fetchFarmers()])
+      setLoans(l as LoanRow[])
+      setFarmers(f as FarmerRow[])
+      setLoading(false)
+    })()
+  }, [])
+
+  const activeLoans = loans.filter(l => l.status === 'Active' || l.status === 'Overdue')
+  const completedLoans = loans.filter(l => l.status === 'Completed')
+  const eligibleFarmers = farmers.filter(f =>
+    f.creditScore >= 50 && !activeLoans.find(l => l.farmerId === f.id)
+  )
+
+  if (loading) {
+    return (
+      <div>
+        <h2 style={{ color: 'var(--gold)' }}>Loan management</h2>
+        <div className="skeleton" style={{ height: 400, marginTop: 16 }} />
+      </div>
+    )
+  }
 
   return (
     <div>
       <h2 style={{ color: 'var(--gold)' }}>Loan management</h2>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0,1fr))', gap: 12, marginTop: 16 }}>
-        <Kan title="Eligible farmers" tone="var(--fresh)">
-          {eligibleFarmers.map((f) => (
+        <Kan title={`Eligible farmers (${eligibleFarmers.length})`} tone="var(--fresh)">
+          {eligibleFarmers.length === 0 ? (
+            <LCard><div style={{ color: 'var(--muted)', fontSize: 13 }}>No eligible farmers — all have active loans or low scores</div></LCard>
+          ) : eligibleFarmers.map(f => (
             <LCard key={f.id}>
               <div style={{ fontWeight: 900 }}>{f.name}</div>
-              <div style={{ fontSize: 12, color: 'var(--muted)' }}>Score {f.creditScore}</div>
+              <div style={{ fontSize: 12, color: 'var(--muted)' }}>Score {f.creditScore} · Grade {f.creditTier}</div>
               <div className="mono" style={{ fontWeight: 800, marginTop: 8 }}>
-                Limit KSh {Math.min(30000, f.creditScore * 400).toLocaleString()}
+                Limit KSh {Math.min(50000, f.creditScore * 500).toLocaleString()}
               </div>
               <Link className="btn btn-gold" style={{ width: '100%', marginTop: 10, justifyContent: 'center' }} to="/flowcredit/disburse">
                 Offer loan
@@ -24,28 +55,47 @@ export function FlowCreditLoansPage() {
             </LCard>
           ))}
         </Kan>
-        <Kan title="Active loans" tone="var(--gold)">
-          {activeLoans.map((l) => (
+
+        <Kan title={`Active loans (${activeLoans.length})`} tone="var(--gold)">
+          {activeLoans.length === 0 ? (
+            <LCard><div style={{ color: 'var(--muted)', fontSize: 13 }}>No active loans</div></LCard>
+          ) : activeLoans.map(l => (
             <LCard key={l.id}>
-              <div style={{ fontWeight: 900 }}>{l.farmerName}</div>
-              <div className="mono" style={{ marginTop: 6 }}>
-                KSh {l.amount.toLocaleString()}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <div style={{ fontWeight: 900 }}>{l.farmerName}</div>
+                {l.status === 'Overdue' && (
+                  <span className="chip" style={{ background: 'rgba(239,68,68,0.15)', color: '#991b1b', fontSize: 10 }}>OVERDUE</span>
+                )}
               </div>
-              <div style={{ fontSize: 12, color: 'var(--muted)', marginTop: 6 }}>Next {l.nextDue}</div>
+              <div className="mono" style={{ marginTop: 6 }}>
+                <Money amount={Number(l.amount)} />
+              </div>
+              <div style={{ fontSize: 12, color: 'var(--muted)', marginTop: 6 }}>
+                {l.interestPct}% · {l.instalments} instalments · Next {l.nextDue || '—'}
+              </div>
               <div style={{ height: 6, background: 'rgba(0,0,0,0.06)', borderRadius: 999, marginTop: 8 }}>
-                <div style={{ width: `${Math.round(l.repaidFraction * 100)}%`, height: '100%', background: 'var(--fresh)', borderRadius: 999 }} />
+                <div style={{
+                  width: `${Math.round(Number(l.repaidFraction || 0) * 100)}%`, height: '100%',
+                  background: l.status === 'Overdue' ? '#ef4444' : 'var(--fresh)', borderRadius: 999,
+                  transition: 'width 0.5s ease',
+                }} />
+              </div>
+              <div style={{ fontSize: 11, color: 'var(--muted)', marginTop: 4 }}>
+                {Math.round(Number(l.repaidFraction || 0) * 100)}% repaid
               </div>
             </LCard>
           ))}
         </Kan>
-        <Kan title="Completed / closed" tone="#166534">
-          {doneLoans.map((l) => (
+
+        <Kan title={`Completed (${completedLoans.length})`} tone="#166534">
+          {completedLoans.length === 0 ? (
+            <LCard><div style={{ color: 'var(--muted)', fontSize: 13 }}>No completed loans yet</div></LCard>
+          ) : completedLoans.map(l => (
             <LCard key={l.id}>
               <div style={{ fontWeight: 900 }}>{l.farmerName}</div>
+              <div className="mono" style={{ marginTop: 6 }}><Money amount={Number(l.amount)} /></div>
               <div style={{ fontSize: 12, color: 'var(--muted)', marginTop: 6 }}>Fully repaid</div>
-              <span className="chip chip-paid" style={{ marginTop: 8 }}>
-                Closed
-              </span>
+              <span className="chip chip-paid" style={{ marginTop: 8 }}>Closed ✅</span>
             </LCard>
           ))}
         </Kan>

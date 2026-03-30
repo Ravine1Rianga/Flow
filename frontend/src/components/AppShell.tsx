@@ -73,8 +73,20 @@ export function AppShell({ flowcredit }: { flowcredit?: boolean }) {
           </NavLink>
 
           <NavGroup label="FlowCredit" />
-          <NavLink className={navClass} to="/flowcredit" onClick={() => isNarrow && closeSidebar()}>
+          <NavLink className={navClass} to="/flowcredit" end onClick={() => isNarrow && closeSidebar()}>
             FlowCredit Hub
+          </NavLink>
+          <NavLink className={navClass} to="/flowcredit/scoring" onClick={() => isNarrow && closeSidebar()} style={{ paddingLeft: 28, fontSize: 13 }}>
+            Credit Scoring
+          </NavLink>
+          <NavLink className={navClass} to="/flowcredit/loans" onClick={() => isNarrow && closeSidebar()} style={{ paddingLeft: 28, fontSize: 13 }}>
+            Loans
+          </NavLink>
+          <NavLink className={navClass} to="/flowcredit/disburse" onClick={() => isNarrow && closeSidebar()} style={{ paddingLeft: 28, fontSize: 13 }}>
+            B2C Disburse
+          </NavLink>
+          <NavLink className={navClass} to="/flowcredit/transactions" onClick={() => isNarrow && closeSidebar()} style={{ paddingLeft: 28, fontSize: 13 }}>
+            Daraja API Feed
           </NavLink>
 
           <NavGroup label="More" />
@@ -86,6 +98,11 @@ export function AppShell({ flowcredit }: { flowcredit?: boolean }) {
           </NavLink>
           <NavLink className={navClass} to="/app/settings" onClick={() => isNarrow && closeSidebar()}>
             Settings
+          </NavLink>
+
+          <NavGroup label="Farmer Portal" />
+          <NavLink className={navClass} to="/portal" onClick={() => isNarrow && closeSidebar()} style={{ opacity: 0.75 }}>
+            Open Farmer Portal →
           </NavLink>
         </nav>
 
