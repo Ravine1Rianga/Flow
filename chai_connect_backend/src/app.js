@@ -1,7 +1,3 @@
-/**
- * ChaiConnect Express application entry (middleware + routes).
- * Demo JSON APIs are mounted at /api; production can add auth and real Daraja webhooks here.
- */
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
@@ -12,10 +8,15 @@ const apiRoutes = require('./routes/api');
 const app = express();
 
 // Middleware
-app.use(helmet()); // Security headers
-app.use(cors()); // Allow frontend to connect
-app.use(morgan('dev')); // Log requests
-app.use(express.json()); // Parse JSON bodies
+app.use(helmet());
+app.use(cors());
+app.use(morgan('dev'));
+app.use(express.json());
+
+// Root route
+app.get('/', (req, res) => {
+  res.status(200).send('FlowCredit backend is running');
+});
 
 // Health check route
 app.get('/health', (req, res) => {
